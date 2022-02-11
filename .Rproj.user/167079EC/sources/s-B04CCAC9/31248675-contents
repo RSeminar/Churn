@@ -1,0 +1,10 @@
+Package: Churn
+Type: Package
+Title: Calculates Churn Probability
+Version: 0.1.0
+Author: Me
+Maintainer: Me
+Dependencies: data.table
+License: What license is it under?
+Encoding: UTF-8
+LazyData: true

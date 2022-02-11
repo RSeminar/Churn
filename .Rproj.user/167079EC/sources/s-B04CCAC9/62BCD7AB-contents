@@ -1,0 +1,53 @@
+#Setup R and read in Data
+
+setwd("C:/Users/User/Desktop/R-Projekt")
+
+library(data.table)
+
+data1 <- fread("data_customer.csv")
+data2 <- fread("data_personal.csv")
+
+#Prepare Data for Analysis
+
+data<-merge(data1, data2, by="CustomerId", all=TRUE)
+data$Exited<-as.factor(data$Exited)
+data$Gender <-as.factor(data$Gender)
+str(data$Exited)
+str(data$Gender)
+summary(data)
+write.csv(data,"data.csv")
+#Predict Churn Probability
+
+formula <- data$Exited ~ data$CreditScore + data$Gender + data$Age + data$Tenure + data$Balance + data$NumOfProducts + data$HasCrCard + data$IsActiveMember + data$EstimatedSalary
+model <- glm(formula = formula, family = "binomial", data = data)
+predict <- predict(object = model, newdata = data, type="response")
+print(predict)
+data$churn <- predict
+
+data[1, max(data$churn), by=CustomerId]
+data[nrow(data), min(data$churn), by=CustomerId]
+mean(data[Gender=="Male"]$churn)
+mean(data[Gender=="Female"]$churn)
+
+churn <- function(Dataset, CustomerID){
+  library(data.table)
+  datafunction <-fread(Dataset)
+  datafunction$Exited<-as.factor(datafunction$Exited)
+  datafunction$Gender <-as.factor(datafunction$Gender)
+  formulafunction <- datafunction$Exited ~ datafunction$CreditScore + datafunction$Gender + datafunction$Age + datafunction$Tenure + datafunction$Balance + datafunction$NumOfProducts + datafunction$HasCrCard + datafunction$IsActiveMember + datafunction$EstimatedSalary
+  modelfunction <- glm(formula = formulafunction, family = "binomial", data = datafunction)
+  datafunction$churn <- predict(object = modelfunction, newdata = datafunction, type="response")
+  if (CustomerID %in% datafunction$CustomerId) {
+    print(datafunction[CustomerId==CustomerID]$churn)
+  } else {
+    print("Error, the CustomerID does not exist")
+  }
+}
+
+churn(Dataset = "data.csv", CustomerID = 15565706)
+
+
+
+
+
+

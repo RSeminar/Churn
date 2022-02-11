@@ -1,0 +1,2 @@
+library(Churn)
+churn("data.csv",15647311)

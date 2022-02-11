@@ -1,0 +1,31 @@
+# Hello, world!
+#
+# This is an example function named 'hello'
+# which prints 'Hello, world!'.
+#
+# You can learn more about package authoring with RStudio at:
+#
+#   http://r-pkgs.had.co.nz/
+#
+# Some useful keyboard shortcuts for package authoring:
+#
+#   Install Package:           'Ctrl + Shift + B'
+#   Check Package:             'Ctrl + Shift + E'
+#   Test Package:              'Ctrl + Shift + T'
+
+churn <- function(Dataset, CustomerID){
+  library(data.table)
+  datafunction <-fread(Dataset)
+  datafunction$Exited<-as.factor(datafunction$Exited)
+  datafunction$Gender <-as.factor(datafunction$Gender)
+  formulafunction <- datafunction$Exited ~ datafunction$CreditScore + datafunction$Gender + datafunction$Age + datafunction$Tenure + datafunction$Balance + datafunction$NumOfProducts + datafunction$HasCrCard + datafunction$IsActiveMember + datafunction$EstimatedSalary
+  modelfunction <- glm(formula = formulafunction, family = "binomial", data = datafunction)
+  datafunction$churn <- predict(object = modelfunction, newdata = datafunction, type="response")
+  if (CustomerID %in% datafunction$CustomerId) {
+    print(datafunction[CustomerId==CustomerID]$churn)
+  } else {
+    print("Error, the CustomerID does not exist")
+  }
+}
+usethis::use_testthat()
+use_test()
